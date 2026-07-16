@@ -81,7 +81,7 @@ def analyze_html_with_gemini(html_data: str, api_key: str) -> CrousListing:
     
     # Run structured JSON schema parsing
     response = client.models.generate_content(
-        model='gemini-2.5-flash',
+        model='gemini-3.1-pro',
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json",
