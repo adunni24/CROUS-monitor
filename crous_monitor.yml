@@ -1,1 +1,32 @@
+name: Run CROUS AI Monitor
 
+on:
+  schedule:
+    # Runs every 15 minutes (using UTC time)
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Allows you to trigger it manually from GitHub
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install google-genai pydantic playwright requests
+        playwright install chromium
+
+    - name: Run script
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: python crous_monitor.py
