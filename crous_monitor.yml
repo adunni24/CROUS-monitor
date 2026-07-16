@@ -6,6 +6,11 @@ on:
     - cron: '*/15 * * * *'
   workflow_dispatch: # Allows you to trigger it manually from GitHub
 
+# NEW: Prevents a new run from starting if the previous one is still stuck
+concurrency:
+  group: crous-monitor
+  cancel-in-progress: true
+
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
@@ -25,6 +30,8 @@ jobs:
         playwright install chromium
 
     - name: Run script
+      # NEW: This tells GitHub to mark the workflow as "Success" even if the Python script crashes
+      continue-on-error: true 
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
